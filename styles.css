@@ -1,0 +1,227 @@
+/* styles.css */
+/* Add this CSS to your styles.css */
+#map {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh; /* 100% of viewport height */
+    overflow: hidden;
+}
+
+.loading-screen img {
+    max-width: 200px; /* Adjust the logo size */
+}
+
+.content {
+    display: none; /* Initially hide the content */
+}
+
+.loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #fff;
+    z-index: 999; /* Ensure it's on top */
+    transition: opacity 1s ease-in-out;
+}
+/* styles.css */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+/* Add this CSS to your styles.css */
+/* Add this CSS to your styles.css */
+/* Add this CSS to your styles.css */
+.modal-content {
+    background-color: #f2f2f2; /* Light blue background */
+    border: 1px solid #ccc;
+    border-radius: 10px; /* Curved edges */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Shadow effect */
+    width: 80%; /* Adjust the width as needed */
+    max-width: 400px; /* Set a maximum width */
+    margin: 10% auto; /* Center the popup vertically and horizontally */
+    padding: 30px;
+    padding-top: 1;
+    text-align: center;
+}
+
+
+/* Add this CSS to your styles.css */
+.modal-content h2 {
+    font-size: 30px; /* Adjust the font size as needed */
+}
+
+
+
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Add this CSS to your styles.css */
+#crimeCategory, #crimeDescription, #addCrimeMarker {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 5px;
+    width: 100%;
+    background-color: #f5f5f5; /* Light blue hint background */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Shadow effect */
+}
+#crimeDescription{
+    width:94.5%
+}
+
+
+/* Additional styling for the dropdown arrow */
+#crimeCategory {
+    background-image: url("dropdown-arrow.png"); /* Replace with your arrow image */
+    background-repeat: no-repeat;
+    background-position: 95% 50%;
+    appearance: none; /* Remove default appearance (e.g., in Safari) */
+    -webkit-appearance: none; /* Remove default appearance (e.g., in older WebKit browsers) */
+    -moz-appearance: none; /* Remove default appearance (e.g., in Firefox) */
+}
+
+/* Add this CSS to your styles.css */
+#addCrimeMarker {
+    /* Your existing styles for the button */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 5px;
+    background-color: #f5f5f5; /* Light blue hint background */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Shadow effect */
+
+    /* New styles for hover effect */
+    transition: box-shadow 0.3s ease; /* Smooth transition */
+}
+
+#addCrimeMarker:hover {
+    box-shadow: 0 0 10px rgba(173, 216, 230, 0.7); /* Light blue shadow on hover */
+}
+
+/* Apply the font to the entire body */
+body {
+    font-family: 'Bebas Neue', sans-serif;
+}
+
+/* Apply the font to specific elements, e.g., headings */
+h1, h2, h3 {
+    font-family: 'Bebas Neue', sans-serif;
+}
+
+/* Apply the font to the button */
+#addCrimeMarker {
+    font-family: 'Bebas Neue', sans-serif;
+}
+
+/* Apply the font to the description text box */
+#crimeDescription {
+    font-family: 'Bebas Neue', sans-serif;
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+    background-color: #fff;
+    overflow: hidden;
+}
+
+
+.like-button {
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.dislike-button {
+    background-color: #f44336; /* Red */
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+.like-button:disabled {
+    background-color: #ccc; /* Light gray */
+    cursor: not-allowed;
+    transition:none;
+}
+
+/* Styles for disabled Dislike button */
+.dislike-button:disabled {
+    background-color: #ccc; /* Light gray */
+    cursor: not-allowed;
+    transition:none;
+}
+
+.like-button:hover {
+    background-color: #45a049; /* Slightly darker green on hover */
+}
+
+/* Hover effect for Dislike button */
+.dislike-button:hover {
+    background-color: #d32f2f; /* Slightly darker red on hover */
+}
+
+.like-button:disabled:hover {
+    background-color: #ccccccd8; /* Light gray */
+}
+
+/* Override hover effect for disabled Dislike button */
+.dislike-button:disabled:hover {
+    background-color: #ccccccd8; /* Light gray */
+}
+
+#switchToSanAntonioMap {
+    position: absolute;
+    top: 50px; /* Adjust the top position as needed */
+    left: 5px; /* Adjust the left position as needed */
+    z-index: 999; /* Ensure the button is on top of other elements */
+    display: block;
+    margin: 10px;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}

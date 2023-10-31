@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script src="https://www.gstatic.com/firebasejs/9.2.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.2.0/firebase-database-compat.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAXKMWfaBN3xByJeljyuyRjyxz-JsIvbIo&callback=initMap" async defer></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Bebas+Neue">
+
+    <title>SafetyNet</title>
+    <link rel="icon" href="logo2.png" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+    <div class="loading-screen">
+        <img src="logo1.png" alt="Your Logo">
+        <script>
+            window.addEventListener('load', function () {
+                const loadingScreen = document.querySelector('.loading-screen');
+                const content = document.querySelector('.content');
+        
+                setTimeout(function () {
+                    loadingScreen.style.opacity = '0';
+                    setTimeout(function () {
+                        loadingScreen.style.display = 'none';
+                        content.style.display = 'block';
+                    }, 1000); // Adjust the time (in milliseconds) to match your animation
+                }, 1000); // Adjust the time (in milliseconds) to match your animation
+            });
+        </script>
+    </div>
+
+    <div id="map"></div>
+    <button id="switchToSanAntonioMap">Switch to San Antonio Crime Map</button>
+
+    <!-- Insert this script at the bottom of the HTML, but before you use any Firebase services -->
+    <script src="script.js"></script>
+
+    <!-- Modal for marker creation -->
+    <div id="markerModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Report a Crime</h2>
+            <label for="crimeDescription">Description:</label>
+            <input type="text" id="crimeDescription" placeholder="Enter description"><br><br>
+            <label for="crimeCategory">Category:</label>
+            <select id="crimeCategory">
+                <option value="Robbery" data-emoji="robbery">💰 Robbery</option>
+                <option value="Murder" data-emoji="murder">🔪 Murder</option>
+                <option value="Shooting" data-emoji="shooting">🔫 Shooting</option>
+                <option value="Assault" data-emoji="assault">👊 Assault</option>
+                <option value="Other" data-emoji="other">❓ Other</option>
+                <!-- Add more categories as needed -->
+            </select><br><br>
+            <button id="addCrimeMarker">Add Marker</button>
+        </div>
+    </div>
+
+    <script>
+        function adjustMapHeight() {
+            const mapContainer = document.getElementById("map");
+            const toolbarHeight = window.innerHeight - document.documentElement.clientHeight;
+        
+            mapContainer.style.height = `calc(100vh - ${toolbarHeight}px)`;
+        }
+        
+        // Call the function on page load and window resize
+        window.onload = adjustMapHeight;
+        window.onresize = adjustMapHeight;
+
+        document.getElementById("switchToSanAntonioMap").addEventListener("click", function() {
+            // Redirect the user to the San Antonio crime map page
+            window.location.href = "sa-map.html";
+
+        });
+        </script>
+
+</body>
+</html>

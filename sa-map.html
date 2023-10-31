@@ -1,0 +1,40 @@
+<!-- san_antonio_map.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="icon" href="logo2.png" type="image/x-icon">
+
+    <title>SafetyNet - San Antonio Crime Map</title>\
+
+    <style>
+        html,body{
+            overflow:hidden;
+        }
+
+        #switchToSafetyNetMap {
+    position: absolute;
+    top: 120px; /* Adjust the top position as needed */
+    left: 10px; /* Adjust the left position as needed */
+    z-index: 999; /* Ensure the button is on top of other elements */
+    display: block;
+    margin: 10px;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+        </style>
+</head>
+<body>
+    <iframe src="https://communitycrimemap.com/?address=78205" style="width: 100%; height: 100vh; border: none;"></iframe>
+    <button id="switchToSafetyNetMap">Switch to SafetyNet Map</button>
+    <script>
+        document.getElementById("switchToSafetyNetMap").addEventListener("click", function () {
+            window.location.href = "index.html"; // Replace with the actual file name of your SafetyNet map HTML.
+        });
+    </script>
+
+</body>
+</html>
