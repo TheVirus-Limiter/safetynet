@@ -11,18 +11,23 @@ const firebaseConfig = {
 }
 
 
+window.addEventListener("load", () => {
+    if (Notification.permission !== "granted") {
+        Notification.requestPermission();
+    }})
 
 
 
-
-// Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 
 
 
 
+
 function initMap() {
+    let userLocationMarker;
+let proximityCircle;
     const map = new google.maps.Map(document.getElementById("map"), {
         center: { lat: 29.4241, lng: -98.4936 },
         zoom: 12,
@@ -37,18 +42,15 @@ function initMap() {
     const crimeDescriptionInput = document.getElementById("crimeDescription");
     const crimeCategorySelect = document.getElementById("crimeCategory");
 
-    // Open the marker creation modal when clicking on the map
     map.addListener("click", (event) => {
         markerModal.style.display = "block";
     });
 
-    // Close the marker creation modal
     const closeModalButton = document.getElementsByClassName("close")[0];
     closeModalButton.addEventListener("click", () => {
         markerModal.style.display = "none";
     });
 
-    // Handle marker creation when the "Add Marker" button is clicked
     addMarkerButton.addEventListener("click", () => {
         const crimeDescription = crimeDescriptionInput.value;
         const selectedOption = crimeCategorySelect.options[crimeCategorySelect.selectedIndex];
@@ -65,25 +67,130 @@ function initMap() {
                 dislikes: 0,
             };
 
-            // Save the new marker to Firebase and retrieve its ID
             const markersRef = database.ref("markers");
             const newMarkerRef = markersRef.push();
             const markerId = newMarkerRef.key;
             newMarkerRef.set(marker);
 
-            // Clear input fields and close the modal
             crimeDescriptionInput.value = "";
             crimeCategorySelect.selectedIndex = 0;
             markerModal.style.display = "none";
 
-            // Call createMarker with the marker and its ID
             createMarker(marker, markerId);
         } else {
             alert("Please fill in all fields and select a category.");
         }
     });
 
+
+const proximitySlider = document.getElementById("proximitySlider");
+const proximityValue = document.getElementById("proximity-value");
+
+let proximityThreshold = 1;
+
+proximitySlider.addEventListener("input", () => {
+    proximityThreshold = parseInt(proximitySlider.value);
+    proximityValue.textContent = `${proximityThreshold} mile${proximityThreshold > 1 ? "s" : ""}`;
+});
+
+function checkProximityToFirebaseMarkers(userLocation) {
+    const markersRef = database.ref("markers");
+    const proximity = document.getElementById("proximitySlider").value;
+
+    markersRef.on("value", (snapshot) => {
+        const markers = snapshot.val();
+
+        if (markers) {
+            Object.keys(markers).forEach((markerKey) => {
+                const marker = markers[markerKey];
+                const markerLocation = {
+                    lat: marker.lat,
+                    lng: marker.lng,
+                };
+
+                const distance = calculateDistance(
+                    userLocation.lat,
+                    userLocation.lng,
+                    markerLocation.lat,
+                    markerLocation.lng
+                );
+
+                if (distance < proximityThreshold) {
+           
+                        const notification = new Notification("Crime Alert", {
+                            body: `You are within ${proximityThreshold} mile${proximityThreshold > 1 ? "s" : ""} of ${marker.details}`,
+                        })
+                       
+                    alert(`You are within ${proximityThreshold} mile${proximityThreshold > 1 ? "s" : ""} of ${marker.details}`);
+                }
+                updateMarkerBoundary(userLocation, proximity);
+            });
+        }
+    })
+}
+
+proximityValue.textContent = `${proximityThreshold} mile${proximityThreshold > 1 ? "s" : ""}`;
+
+function updateMarkerBoundary(userLocation, proximity) {
+    const markerBoundary = document.getElementById("markerBoundary");
+
+    const pixelsPerMile = 10; 
+    const radiusPixels = proximity * pixelsPerMile;
+
+    markerBoundary.style.width = `${2 * radiusPixels}px`;
+    markerBoundary.style.height = `${2 * radiusPixels}px`;
+    markerBoundary.style.left = `${userLocation.pixelX - radiusPixels}px`;
+    markerBoundary.style.top = `${userLocation.pixelY - radiusPixels}px`;
+}
+
+
+    if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(function (position) {
+            const userLocation = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude,
+            };
     
+            userLocationMarker = new google.maps.Marker({
+                position: userLocation,
+                map: map,
+                title: "Your Location",
+            });
+    
+            proximityCircle = new google.maps.Circle({
+                strokeColor: "#FF0000",
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillColor: "#FF0000",
+                fillOpacity: 0.35,
+                map: map,
+                center: userLocation,
+                clickable:false,
+                radius: proximityThreshold * 1609.34, 
+            });
+    
+            checkProximityToFirebaseMarkers(userLocation);
+        });
+    }
+proximitySlider.addEventListener("input", () => {
+    proximity = parseInt(proximitySlider.value, 10);
+    proximityCircle.setRadius(proximity * 1609.34); 
+});
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+        const R = 6371; 
+        const dLat = (lat2 - lat1) * (Math.PI / 180);
+        const dLon = (lon2 - lon1) * (Math.PI / 180);
+        const a =
+            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        const distance = R * c; 
+        return distance;
+    }
+
+
+                   
 
     function clearCookies() {
         const cookies = document.cookie.split(";");
@@ -94,13 +201,11 @@ function initMap() {
             const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
             document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
         }
+    
     }
-    
 
     
 
-// ...
-// ...
 
 function createMarker(marker, markerId) {
     const emojiIcon = {
@@ -135,7 +240,7 @@ function createMarker(marker, markerId) {
     const dislikeButton = document.createElement("button");
     dislikeButton.textContent = "Dislike";
 
-    let contentContainer = document.createElement('div'); // Declare contentContainer here
+    let contentContainer = document.createElement('div'); 
 
     const descriptionDiv = document.createElement('div');
     descriptionDiv.textContent = marker.details;
@@ -159,7 +264,6 @@ likeButton.classList.add("like-button");
 dislikeButton.classList.add("dislike-button");
 
 
-    // Define userLike and userDislike here
     let userLike = localStorage.getItem(`${markerId}_like`);
     let userDislike = localStorage.getItem(`${markerId}_dislike`);
 
@@ -182,19 +286,19 @@ dislikeButton.classList.add("dislike-button");
                 updateNegativeRating(markerId, "likes", true);
                 localStorage.removeItem(`${markerId}_dislike`);
             } else if (!userDislike) {
-                updateNegativeRating(markerId, "dislikes", true); // Decrement dislikes if not previously disliked
+                updateNegativeRating(markerId, "dislikes", true); 
             }
-            // Update likes text box
+         
             likesDiv.textContent = `Likes: ${marker.likes || 0}`;
-            // Update dislikes text box
+            
             dislikesDiv.textContent = `Dislikes: ${marker.dislikes || 0}`;
         } else {
-            // Remove the user's like
+            
             updateNegativeRating(markerId, "likes");
             likeButton.disabled = false;
             dislikeButton.disabled = false;
             localStorage.removeItem(`${markerId}_like`);
-            // Update likes text box
+           
             likesDiv.textContent = `Likes: ${marker.likes || 0}`;
         }
     });
@@ -210,19 +314,15 @@ dislikeButton.classList.add("dislike-button");
                 updateNegativeRating(markerId, "dislikes", true);
                 localStorage.removeItem(`${markerId}_like`);
             } else if (!userLike) {
-                updateNegativeRating(markerId, "likes", true); // Decrement likes if not previously liked
+                updateNegativeRating(markerId, "likes", true);
             }
-            // Update likes text box
             likesDiv.textContent = `Likes: ${marker.likes || 0}`;
-            // Update dislikes text box
             dislikesDiv.textContent = `Dislikes: ${marker.dislikes || 0}`;
         } else {
-            // Remove the user's dislike
             updateNegativeRating(markerId, "dislikes");
             likeButton.disabled = false;
             dislikeButton.disabled = false;
             localStorage.removeItem(`${markerId}_dislike`);
-            // Update dislikes text box
             dislikesDiv.textContent = `Dislikes: ${marker.dislikes || 0}`;
         }
     });
@@ -277,9 +377,10 @@ dislikeButton.classList.add("dislike-button");
                     markerData[ratingType]++;
                 }
                 if (ratingType === "likes" && markerData["dislikes"] > 0) {
-                    markerData["dislikes"]--; // Decrement dislikes when liking
+                    markerData["dislikes"]--; 
                 } else if (ratingType === "dislikes" && markerData["likes"] > 0) {
-                    markerData["likes"]--; // Decrement likes when disliking
+                    markerData["likes"]--; 
+                    
                 }
                 return markerData;
             }
